@@ -18,9 +18,11 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -31,19 +33,28 @@ public class MainActivity extends AppCompatActivity {
     public void onGoClick(View view) {
 
         mEnterCity = findViewById(R.id.etEnterCity);
-        String cityName = mEnterCity.getText().toString();
 
         InputMethodManager inputMethodManager =
                 (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(mEnterCity.getWindowToken(), 0);
 
-
         mWeatherData = findViewById(R.id.txtWeatherData);
 
-        FetchWeatherAPITask fetchWeatherAPITask = new FetchWeatherAPITask();
-        fetchWeatherAPITask
-                .execute("https://api.openweathermap.org/data/2.5/weather?q=" + cityName
-                        + "&appid=7b35086e80a579855a86a30689073378");
+        try {
+            String encodedCityName = URLEncoder
+                    .encode(mEnterCity.getText().toString(), "UTF-8");
+
+            FetchWeatherAPITask fetchWeatherAPITask = new FetchWeatherAPITask();
+            fetchWeatherAPITask
+                    .execute("https://api.openweathermap.org/data/2.5/weather?q=" + encodedCityName
+                            + "&appid=7b35086e80a579855a86a30689073378");
+
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+
+            Toast.makeText(MainActivity.this,
+                    "Error occurred!", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public class FetchWeatherAPITask extends AsyncTask<String, Void, String> {
@@ -77,6 +88,9 @@ public class MainActivity extends AppCompatActivity {
             } catch (IOException e) {
 
                 e.printStackTrace();
+
+                Toast.makeText(MainActivity.this,
+                        "Error occurred!", Toast.LENGTH_SHORT).show();
             }
 
             return null;
@@ -110,6 +124,9 @@ public class MainActivity extends AppCompatActivity {
             } catch (JSONException e) {
 
                 e.printStackTrace();
+
+                Toast.makeText(MainActivity.this,
+                        "Error occurred!", Toast.LENGTH_SHORT).show();
             }
 
         }
