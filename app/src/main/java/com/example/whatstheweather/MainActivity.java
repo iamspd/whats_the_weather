@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -88,7 +89,15 @@ public class MainActivity extends AppCompatActivity {
                     JSONObject weatherArrayObj = weatherArray.getJSONObject(i);
                     String weatherData = weatherArrayObj.getString("description");
 
-                    mWeatherData.setText(weatherData);
+                    if (!weatherData.equals("")) {
+
+                        mWeatherData.setText(weatherData);
+
+                    } else {
+                        Toast.makeText(MainActivity.this,
+                                "Error occurred!", Toast.LENGTH_SHORT).show();
+                    }
+
                 }
 
             } catch (JSONException e) {
