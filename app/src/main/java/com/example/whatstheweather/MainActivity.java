@@ -2,9 +2,11 @@ package com.example.whatstheweather;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,6 +32,11 @@ public class MainActivity extends AppCompatActivity {
 
         mEnterCity = findViewById(R.id.etEnterCity);
         String cityName = mEnterCity.getText().toString();
+
+        InputMethodManager inputMethodManager =
+                (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(mEnterCity.getWindowToken(), 0);
+
 
         mWeatherData = findViewById(R.id.txtWeatherData);
 
