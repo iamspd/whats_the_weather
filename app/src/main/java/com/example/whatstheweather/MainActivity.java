@@ -2,13 +2,96 @@ package com.example.whatstheweather;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
+
+    // widgets
+    private EditText mEnterCity;
+    private TextView mWeatherData;
+
+    public class FetchWeatherAPITask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... urls) {
+
+            URL url;
+            HttpURLConnection httpURLConnection;
+            String result = "";
+
+            try {
+                url = new URL(urls[0]);
+                httpURLConnection = (HttpURLConnection) url.openConnection();
+                httpURLConnection.connect();
+
+                InputStream inputStream = httpURLConnection.getInputStream();
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                int data = inputStreamReader.read();
+
+                while (data != -1) {
+
+                    char current = (char) data;
+                    result += current;
+
+                    data = inputStreamReader.read();
+                }
+
+                return result;
+
+            } catch (IOException e) {
+
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+
+            try {
+                JSONObject apiObj = new JSONObject(result);
+                String weather = apiObj.getString("weather");
+
+                JSONArray weatherArray = new JSONArray(weather);
+
+                for (int i = 0; i < weatherArray.length(); i++) {
+                    JSONObject weatherArrayObj = weatherArray.getJSONObject(i);
+                    String weatherData = weatherArrayObj.getString("description");
+
+                    mWeatherData.setText(weatherData);
+                }
+
+            } catch (JSONException e) {
+
+                e.printStackTrace();
+            }
+
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mEnterCity = findViewById(R.id.etEnterCity);
+        mWeatherData = findViewById(R.id.txtWeatherData);
+
     }
 }
