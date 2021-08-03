@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -23,6 +24,19 @@ public class MainActivity extends AppCompatActivity {
     // widgets
     private EditText mEnterCity;
     private TextView mWeatherData;
+
+    public void onGoClick(View view) {
+
+        mEnterCity = findViewById(R.id.etEnterCity);
+        String cityName = mEnterCity.getText().toString();
+
+        mWeatherData = findViewById(R.id.txtWeatherData);
+
+        FetchWeatherAPITask fetchWeatherAPITask = new FetchWeatherAPITask();
+        fetchWeatherAPITask
+                .execute("https://api.openweathermap.org/data/2.5/weather?q=" + cityName
+                        + "&appid=7b35086e80a579855a86a30689073378");
+    }
 
     public class FetchWeatherAPITask extends AsyncTask<String, Void, String> {
 
@@ -89,9 +103,5 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        mEnterCity = findViewById(R.id.etEnterCity);
-        mWeatherData = findViewById(R.id.txtWeatherData);
-
     }
 }
